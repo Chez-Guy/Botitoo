@@ -5,7 +5,6 @@ from discord.ext import commands
 from datetime import datetime, date
 from dotenv import dotenv_values
 import glob
-import asyncio
 import requests
 import mysql.connector
 import json
