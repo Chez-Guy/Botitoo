@@ -118,7 +118,7 @@ class Botitoo(commands.Bot):
 
     # end of custom functions
     async def on_connect(self):
-        for filename in glob.iglob("botitoo/cogs/**", recursive=True):
+        for filename in glob.iglob("cogs/**", recursive=True):
             if filename.endswith(".py"):
                 print(filename)
                 try:
