@@ -10,13 +10,13 @@ class getCount(commands.Cog):
 
     @app_commands.command(name="count",description="Get the current count in the counting channel.")
     async def slash_countcmd(self, interaction):
-        await interaction.response.send_message("> The current count is **{}**".format(int(self.bot.getStorage("count"))))
+        await interaction.response.send_message("> The current count is **{}**".format(self.bot.getStorage("count")))
 
     async def cog_load(self):
-        print(f"{self.__class__.__name__} loaded!")
+        print(f"{self.__class__.__name__} loaded")
 
     async def cog_unload(self):
-        print(f"{self.__class__.__name__} unloaded!")
+        print(f"{self.__class__.__name__} unloaded")
 
 async def setup(bot: Botitoo):
     await bot.add_cog(getCount(bot=bot))

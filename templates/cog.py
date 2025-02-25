@@ -9,10 +9,16 @@ class cog(commands.Cog):
     def __init__(self, bot: Botitoo):
         self.bot = bot # adding a bot attribute for easier access
 
-    # command code here
+    @commands.command(name="hello")
+    async def cmd(self, interaction):
+        await interaction.send("Hello, {}!".format(interaction.user.mention))
+    
+    @app_commands.command(name="hello", description="Say hello to the user")
+    async def slash_cmd(self, interaction):
+        await interaction.response.send_message("Hello, {}!".format(interaction.user.mention))
     
     @commands.Cog.listener()
-    async def on_message(self, message): # discord functions here
+    async def on_message(self, message): # discord event function here
         print(message)
     
     async def cog_load(self):
