@@ -1,5 +1,6 @@
 import os
 import discord
+from datetime import datetime
 from discord import app_commands
 from discord.ext import commands
 from botitoo.bot import Botitoo
@@ -8,6 +9,8 @@ from botitoo.bot import Botitoo
 class role_changes(commands.Cog):
     def __init__(self, bot: Botitoo):
         self.bot = bot # adding a bot attribute for easier access
+
+    # TODO: find a better way to do this. prolly taking up some memory, i dunno
 
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
@@ -26,7 +29,6 @@ class role_changes(commands.Cog):
                 "LV100 - Supreme Chatter": "Chatter Level 100"
             }
             
-            global isRole
             for role in roles:
                 for i in range(0, len(before.roles)):
                   if before.roles[i].name == role:
@@ -41,13 +43,14 @@ class role_changes(commands.Cog):
 
                       if role == "LV60 - Ungodly Chatter": await self.bot.get_channel(1194447194137297129).send("Now they can change the <@&1128048702024597540> role color for **1 day!!**, send a DM to <@1297779124739510353> and let us know your color of choice!")
                       elif role == "LV100 - Supreme Chatter": await self.bot.get_channel(1194447194137297129).send("Now they can have **their own custom role!** Send a DM to <@1297779124739510353> and let us know your role name and icon of choice!")
-                      
+                      # maybe add this onto the top message? dk
                       break
+
         else: # if roles are removed
         
             # --- check if booster ---
-            global isBooster
             for i in range(0, len(before.roles)):
+              #  vvvvvvvvvv this might be messy if they're a member AND booster. figure out this logic someday to make sure it's sound
               if before.roles[i].name == "Server Booster" or before.roles[i].name == "YouTube Member":
                 for i in range(0, len(after.roles)):
                   if after.roles[i].name == "Server Booster" or before.roles[i].name == "YouTube Member":
@@ -66,7 +69,23 @@ class role_changes(commands.Cog):
                     await self.bot.get_channel(1321148137494020157).send(f'Removed color roles from {after.mention}')
                     isBooster = False # remember to set this as false cause could cause issues
                     break
-    
+
+            # --- check if custom role subscriber ---
+            for i in range(0, len(before.roles)):
+              if before.roles[i].name == "Your Own Custom Display Role":
+                for i2 in range(0, len(after.roles)):
+                  if after.roles[i2].name == "Your Own Custom Display Role":
+                    isSub = True
+                    break
+                  else:
+                    isSub = False
+            if not isSub:
+              roleID = self.bot.cursor.execute(f"SELECT roleID FROM custom_roles WHERE userID={str(after.id)}").fetchone()[0]
+              await after.remove_roles(int(roleID))
+              self.bot.cursor.execute(f"UPDATE custom_roles SET invalid=1, invalid_time={str(int(datetime.now().timestamp()))} WHERE userID={str(after.id)}")
+              self.bot.db.commit()
+              await self.bot.get_channel(1321148137494020157).send(f'Removed custom role {self.bot.get_guild(1128048701387055209).get_role(int(roleID)).mention} from {after.mention}.')
+
     async def cog_load(self):
         print(f"{self.__class__.__name__} loaded")
 

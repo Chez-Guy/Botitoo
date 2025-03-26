@@ -15,11 +15,11 @@ gifs = {
   "indeed":"https://tenor.com/view/indeed-indeed-you-do-funny-memes-meme-gif-22592820"
 }
 
-class gifs(commands.Cog):
+class gifsCmd(commands.Cog):
     def __init__(self, bot):
         self.bot = bot # adding a bot attribute for easier access
     
-    @app_commands.command(name="gif", description="Sends a GIF selected by our amazing moderators to send in chat")
+    @app_commands.command(name="gif", description="Sends a GIF selected by our amazing moderators and community to send in chat")
     @app_commands.checks.cooldown(1, 5)
     @app_commands.describe(option="The GIF you'd like to send in chat")
     @app_commands.choices(option=[app_commands.Choice(name=key, value=key) for key in gifs.keys()])
@@ -34,4 +34,4 @@ class gifs(commands.Cog):
         print(f"{self.__class__.__name__} unloaded")
 
 async def setup(bot):
-    await bot.add_cog(gifs(bot=bot))
+    await bot.add_cog(gifsCmd(bot=bot))

@@ -12,6 +12,7 @@ class media_share(commands.Cog):
 
     # make a confirm prompt? also make sure to change discord app commands perms so that only I can access :3
     @app_commands.command(name="start",description="Reset and start media share")
+    @app_commands.checks.has_permissions(administrator=True)
     async def resetMediaShare(self, interaction):
         await interaction.response.send_message("__**Media Share Reset Initiated**__", ephemeral=True)
         await interaction.response.send_message("*Resetting submissions channel permission overrides...*", ephemeral=True)

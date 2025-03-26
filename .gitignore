@@ -1,3 +1,4 @@
 .env
 .venv/
 botitoo/__pycache__/
+botitoo/cogs/__pycache__/

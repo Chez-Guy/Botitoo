@@ -35,8 +35,7 @@ class Botitoo(commands.Bot):
         self.colors = [1193322620779778146,1193322880331690024,1193322903173857321,1193322915345731604,1193322927375003708,1193322940603838525,1199434340770267257,1204570321433272320] 
         # roles are in order with how they appear in discord. im sure it doesnt matter but whatever
 
-        global usedLink
-        self.usedLink = usedLink
+        self.usedLink = None
 
         super().__init__(intents=intents, command_prefix='b!')
 
@@ -118,21 +117,18 @@ class Botitoo(commands.Bot):
 
     # end of custom functions
     async def on_connect(self):
-        for filename in glob.iglob("cogs/**", recursive=True):
+        for filename in glob.iglob("botitoo/cogs/**", recursive=True):
             if filename.endswith(".py"):
-                print(filename)
                 try:
                     file = os.path.basename(filename)
                     fn = filename.replace('/', '.').replace('\\', '.').replace(f'.{file}','')
                     cog = f"{fn}.{file.replace('.py', '')}"
-
                     await self.load_extension(cog)
                 except Exception as e:
                     print(f"Failed to load cog {cog}")
                     print(e.with_traceback(None))
         print("Loaded {} cogs".format(len(self.cogs)))
         print('Logged in as {0.user}'.format(self))
-        await self.bot.get_channel(1321148137494020157).send(":white_check_mark: **Bot is online!**")
        
     async def on_ready(self):
         try:
@@ -140,3 +136,5 @@ class Botitoo(commands.Bot):
           print(f"Synced {len(synced)} commands")
         except Exception as e:
           print(e)
+        
+        await self.get_channel(1321148137494020157).send(":white_check_mark: **Bot is online!**")
