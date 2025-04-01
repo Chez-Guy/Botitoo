@@ -14,8 +14,7 @@ class media_share(commands.Cog):
     @app_commands.command(name="start",description="Reset and start media share")
     @app_commands.checks.has_permissions(administrator=True)
     async def resetMediaShare(self, interaction):
-        await interaction.response.send_message("__**Media Share Reset Initiated**__", ephemeral=True)
-        await interaction.response.send_message("*Resetting submissions channel permission overrides...*", ephemeral=True)
+        message = await interaction.response.send_message("__**Media Share Reset Initiated...**__", ephemeral=True)
         await self.bot.get_channel(1262608201082343424).set_permissions(self.bot.get_guild(1128048701387055209).default_role, view_channel=True)
         
         self.bot.cursor.execute("DELETE FROM media_share_users WHERE whitelisted=0")
@@ -28,7 +27,7 @@ class media_share(commands.Cog):
             await self.bot.get_channel(1262608201082343424).set_permissions(target[0], overwrite=None)
             await asyncio.sleep(1) # prevent rate limiting (i know yes there's other ways to do this)
 
-        await interaction.response.send_message("__**Media Share Reset Complete!**__", ephemeral=True)
+        await message.edit_message("__**Media Share Reset Complete!**__", ephemeral=True)
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -39,15 +38,12 @@ class media_share(commands.Cog):
             videoID = message.content[indexAfter:indexAfter+11]
 
             if self.bot.changeMS_database("submissions", "read", videoID) < 5:
-              url = "https://youtube.googleapis.com/youtube/v3/videos?part=contentDetails&id="+videoID+"&key="+os.getenv('GOOG_TOKEN')
-
               payload = {}
               headers = {
                 'Accept': 'application/json'
               }
 
-              response = requests.request("GET", url, headers=headers, data=payload).json()
-
+              response = requests.request("GET", f"https://youtube.googleapis.com/youtube/v3/videos?part=contentDetails&id={videoID}&key={self.bot.env['GOOG_TOKEN']}", headers=headers, data=payload).json()
               print(str(response["pageInfo"]["totalResults"]) + " video")
               if response["pageInfo"]["totalResults"] == 1:
                 length = response['items'][0]['contentDetails']['duration'] # in ISO 8601 (https://en.wikipedia.org/wiki/ISO_8601#Durations)
@@ -75,7 +71,7 @@ class media_share(commands.Cog):
                     self.bot.addToMediaShare(response['items'][0]['id'])
                   else:
                     self.bot.addToMediaShare(response['items'][0]['id'])
-
+              
               if not self.bot.checkWhitelist("media_share_users", message.author.id): 
                 self.bot.changeMS_database("media_share_users", "write", message.author.id, 1)
               if not self.bot.checkWhitelist("submissions", videoID): 

@@ -43,7 +43,7 @@ class Botitoo(commands.Bot):
     # put functions here to be used elsewhere
 
     # media share
-    def addToMediaShare(id):
+    def addToMediaShare(self, id):
         url = "https://api.streamelements.com/kappa/v2/songrequest/602b0c4de3c04194085015db/queue"
 
         payload = json.dumps({
@@ -51,7 +51,7 @@ class Botitoo(commands.Bot):
         })
         headers = {
           'Accept': 'application/json; charset=utf-8, application/json',
-          'Authorization': 'Bearer '+os.getenv('SE_TOKEN'),
+          'Authorization': f"Bearer {self.env['SE_TOKEN']}",
           'Content-Type': 'application/json'
         }
 

@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 import discord
 from discord import app_commands
 from discord.ext import tasks, commands
@@ -21,7 +22,15 @@ class custom_role(commands.Cog):
         else:
             await interaction.response.send_message(f":warning: User {member.mention} has already been registered to role {role.mention}.", ephemeral=True)
 
-    # TODO: add checker function for invalid roles here
+    @tasks.loop(hours=1)
+    async def check_invalid(self):
+        results = self.bot.cursor.execute("SELECT invalid_time, roleID FROM custom_roles WHERE invalid=1")
+        if self.bot.cursor.fetchall():
+            for r in range(0, len(results)):
+                if int(results[r][0]) + 1296000 <= datetime.now().timestamp():
+                    self.bot.cursor.execute(f"DELETE FROM custom_roles WHERE roleID={str(results[r][1])}")
+                    await self.bot.get_guild(1128048701387055209).get_role(int(results[r][1])).delete(reason="Role exceeded 15 day expiration")
+                    self.bot.db.commit()
 
     async def cog_load(self):
         print(f"{self.__class__.__name__} loaded")

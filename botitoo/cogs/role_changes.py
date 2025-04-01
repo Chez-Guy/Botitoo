@@ -30,21 +30,27 @@ class role_changes(commands.Cog):
             }
             
             for role in roles:
-                for i in range(0, len(before.roles)):
-                  if before.roles[i].name == role:
-                    isRole = True
+              for i in range(0, len(before.roles)):
+                if before.roles[i].name == role:
+                  isRole = True
+                  break
+                else:
+                  isRole = False
+              if not isRole:
+                for i in range(0, len(after.roles)):
+                  if after.roles[i].name == role:  
+                    await self.bot.get_channel(1194447194137297129).send(f'{after.mention} just became a {announcement[role]}!')
+                    if role == "LV60 - Ungodly Chatter": await self.bot.get_channel(1194447194137297129).send("Now they can change the <@&1128048702024597540> role color for **1 day!!**, send a DM to <@1297779124739510353> and let us know your color of choice!")
+                    elif role == "LV100 - Supreme Chatter": await self.bot.get_channel(1194447194137297129).send("Now they can have **their own custom role!** Send a DM to <@1297779124739510353> and let us know your role name and icon of choice!")
+                    # maybe add this onto the top message? dk
                     break
-                  else:
-                    isRole = False
-                if not isRole:
-                  for i in range(0, len(after.roles)):
-                    if after.roles[i].name == role:  
-                      await self.bot.get_channel(1194447194137297129).send(f'{after.mention} just became a {announcement[role]}!')
 
-                      if role == "LV60 - Ungodly Chatter": await self.bot.get_channel(1194447194137297129).send("Now they can change the <@&1128048702024597540> role color for **1 day!!**, send a DM to <@1297779124739510353> and let us know your color of choice!")
-                      elif role == "LV100 - Supreme Chatter": await self.bot.get_channel(1194447194137297129).send("Now they can have **their own custom role!** Send a DM to <@1297779124739510353> and let us know your role name and icon of choice!")
-                      # maybe add this onto the top message? dk
-                      break
+            # TODO: check if someone resubs. if the sub role is added AND if they're in the database AND their role is marked as invalid, remove the invalid
+            if after.get_role(1345992570601209890) and not before.get_role(1345992570601209890):
+              self.bot.cursor.execute(f"SELECT * FROM custom_roles WHERE userID={str(after.id)} AND invalid=1")
+              if self.bot.cursor.fetchone():
+                self.bot.cursor.execute(f"UPDATE custom_roles SET invalid=0 WHERE userID={str(after.id)}")
+                self.bot.db.commit()
 
         else: # if roles are removed
         
@@ -70,17 +76,12 @@ class role_changes(commands.Cog):
                     isBooster = False # remember to set this as false cause could cause issues
                     break
 
+              # TODO: change all of these to after.get_role(roleID) cuz i JUST discovered that. they werent lying when they said autism speaks
+
             # --- check if custom role subscriber ---
-            for i in range(0, len(before.roles)):
-              if before.roles[i].name == "Your Own Custom Display Role":
-                for i2 in range(0, len(after.roles)):
-                  if after.roles[i2].name == "Your Own Custom Display Role":
-                    isSub = True
-                    break
-                  else:
-                    isSub = False
-            if not isSub:
-              roleID = self.bot.cursor.execute(f"SELECT roleID FROM custom_roles WHERE userID={str(after.id)}").fetchone()[0]
+            if not after.get_role(1345992570601209890) and before.get_role(1345992570601209890): 
+              self.bot.cursor.execute(f"SELECT roleID FROM custom_roles WHERE userID={str(after.id)}")
+              roleID = self.bot.cursor.fetchone()[0]
               await after.remove_roles(int(roleID))
               self.bot.cursor.execute(f"UPDATE custom_roles SET invalid=1, invalid_time={str(int(datetime.now().timestamp()))} WHERE userID={str(after.id)}")
               self.bot.db.commit()
