@@ -19,14 +19,16 @@ class role_changes(commands.Cog):
                 "YouTube Member", 
                 "LV50 - Godly Chatter", 
                 "LV60 - Ungodly Chatter",
-                "LV100 - Supreme Chatter"
+                "LV100 - Supreme Chatter",
+                "Your Own Custom Display Role"
             ]
 
             announcement = {
                 "YouTube Member": "a YouTube Member", 
                 "LV50 - Godly Chatter": "Chatter Level 50", 
                 "LV60 - Ungodly Chatter": "Chatter Level 60",
-                "LV100 - Supreme Chatter": "Chatter Level 100"
+                "LV100 - Supreme Chatter": "Chatter Level 100",
+                "Your Own Custom Display Role": "Custom Role Subscriber"
             }
             
             for role in roles:
@@ -40,13 +42,19 @@ class role_changes(commands.Cog):
                 for i in range(0, len(after.roles)):
                   if after.roles[i].name == role:  
                     await self.bot.get_channel(1194447194137297129).send(f'{after.mention} just became a {announcement[role]}!')
-                    if role == "LV60 - Ungodly Chatter": await self.bot.get_channel(1194447194137297129).send("Now they can change the <@&1128048702024597540> role color for **1 day!!**, send a DM to <@1297779124739510353> and let us know your color of choice!")
-                    elif role == "LV100 - Supreme Chatter": await self.bot.get_channel(1194447194137297129).send("Now they can have **their own custom role!** Send a DM to <@1297779124739510353> and let us know your role name and icon of choice!")
+                    if role == "LV60 - Ungodly Chatter": 
+                      await self.bot.get_channel(1194447194137297129).send("Now they can change the <@&1128048702024597540> role color for **1 day!!**, send a DM to <@1297779124739510353> and let us know your color of choice!")
+                      break
+                    elif role == "LV100 - Supreme Chatter": 
+                      await self.bot.get_channel(1194447194137297129).send(":sparkles: Now they can have **their own custom role!** Send a DM to <@1297779124739510353> and let us know your role name and icon of choice!")
+                      break
+                    elif role == "Your Own Custom Display Role": 
+                      await self.bot.get_channel(1194447194137297129).send(":sparkles: Now they can have **their own custom role!** And you can too! Head to the top of the channel list and click the Server Shop tab to learn more!")
                     # maybe add this onto the top message? dk
                     break
 
             # TODO: check if someone resubs. if the sub role is added AND if they're in the database AND their role is marked as invalid, remove the invalid
-            if after.get_role(1345992570601209890) and not before.get_role(1345992570601209890):
+            if after.get_role(1345992570601209890) and not before.get_role(1345992570601209890): # custom role sub role
               self.bot.cursor.execute(f"SELECT * FROM custom_roles WHERE userID={str(after.id)} AND invalid=1")
               if self.bot.cursor.fetchone():
                 self.bot.cursor.execute(f"UPDATE custom_roles SET invalid=0 WHERE userID={str(after.id)}")
@@ -55,26 +63,11 @@ class role_changes(commands.Cog):
         else: # if roles are removed
         
             # --- check if booster ---
-            for i in range(0, len(before.roles)):
-              #  vvvvvvvvvv this might be messy if they're a member AND booster. figure out this logic someday to make sure it's sound
-              if before.roles[i].name == "Server Booster" or before.roles[i].name == "YouTube Member":
-                for i in range(0, len(after.roles)):
-                  if after.roles[i].name == "Server Booster" or before.roles[i].name == "YouTube Member":
-                    isBooster = True
-                    break
-                  else: 
-                    isBooster = False
-                break
-              else: 
-                isBooster = False
-            if not isBooster:
-              for i in range(0, len(after.roles)):
-                for i2 in range(0, len(self.bot.colors)):
-                  if after.roles[i].id == self.bot.colors[i2]:
-                    await after.remove_roles(after.guild.get_role(self.bot.colors[i2]))
-                    await self.bot.get_channel(1321148137494020157).send(f'Removed color roles from {after.mention}')
-                    isBooster = False # remember to set this as false cause could cause issues
-                    break
+            if (before.get_role(1141138598880620627) or before.get_role(1138520134118559884)) and not (after.get_role(1141138598880620627) or after.get_role(1138520134118559884)):
+              for i in range(0, self.bot.colors.count):
+                if after.get_role(self.bot.colors[i]):
+                  await after.remove_roles(after.guild.get_role(self.bot.colors[i]))
+                  await self.bot.get_channel(1321148137494020157).send(f'Removed color roles from {after.mention}')
 
               # TODO: change all of these to after.get_role(roleID) cuz i JUST discovered that. they werent lying when they said autism speaks
 

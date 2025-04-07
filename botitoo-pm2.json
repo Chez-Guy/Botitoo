@@ -3,6 +3,7 @@
         "name": "Botitoo",
         "cwd": "./",
         "script": "main.py",
-        "log_date_format": "YYYY-MM-DD HH:mm Z"
+        "log_date_format": "YYYY-MM-DD HH:mm Z",
+        "interpreter": "./.venv/bin/python"
     }]
 }

@@ -22,7 +22,7 @@ class Botitoo(commands.Bot):
         intents.integrations = True
         intents.reactions = True
         
-        self.env = dotenv_values(".env")
+        self.env = dotenv_values("../botitoo/.env")
 
         self.db=mysql.connector.connect(
             host=self.env['DB_HOST'],
