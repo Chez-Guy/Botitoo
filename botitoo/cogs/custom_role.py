@@ -37,7 +37,7 @@ class custom_role(commands.Cog):
     @app_commands.describe(member="Member to link role to", role="Member's custom role to link.")
     @app_commands.checks.has_permissions(manage_messages=True)
     async def register(self, interaction, member: discord.Member, role: discord.Role):
-        self.bot.cursor.execute(f"SELECT roleID FROM custom_roles WHERE userID={str(member.id)}")
+        self.bot.cursor.execute(f"SELECT roleid FROM custom_roles WHERE userid={str(member.id)}")
 
         for i in blacklist:
             if role.id==i:
@@ -46,7 +46,7 @@ class custom_role(commands.Cog):
 
 
         if not self.bot.cursor.fetchone() and member.get_role(role.id):
-            self.bot.cursor.execute(f"INSERT INTO custom_roles (userID, roleID) VALUES ({str(member.id)}, {str(role.id)})")
+            self.bot.cursor.execute(f"INSERT INTO custom_roles (userid, roleid) VALUES ({str(member.id)}, {str(role.id)})")
             self.bot.db.commit()
             await interaction.response.send_message(f":white_check_mark: **User {member.mention} has been successfully registered to role {role.mention}!**")
         elif not member.get_role(role.id):
@@ -56,11 +56,11 @@ class custom_role(commands.Cog):
 
     @tasks.loop(hours=1)
     async def check_invalid(self):
-        results = self.bot.cursor.execute("SELECT invalid_time, roleID FROM custom_roles WHERE invalid=1")
+        results = self.bot.cursor.execute("SELECT invalid_time, roleid FROM custom_roles WHERE invalid=1")
         if self.bot.cursor.fetchall():
             for r in range(0, len(results)):
                 if int(results[r][0]) + 1296000 <= datetime.now().timestamp():
-                    self.bot.cursor.execute(f"DELETE FROM custom_roles WHERE roleID={str(results[r][1])}")
+                    self.bot.cursor.execute(f"DELETE FROM custom_roles WHERE roleid={str(results[r][1])}")
                     await self.bot.get_guild(1128048701387055209).get_role(int(results[r][1])).delete(reason="Role exceeded 15 day expiration")
                     self.bot.db.commit()
 

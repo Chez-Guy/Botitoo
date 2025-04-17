@@ -1,7 +1,4 @@
 import discord
-from discord import app_commands
-from discord.ext import commands
-from dotenv import dotenv_values
 from botitoo.bot import Botitoo
 
 bot = Botitoo()
