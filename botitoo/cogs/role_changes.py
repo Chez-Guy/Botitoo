@@ -24,7 +24,7 @@ class role_changes(commands.Cog):
             ]
 
             announcement = {
-                "YouTube Member": "a YouTube Member", 
+                "YouTube Member": "YouTube Member", 
                 "LV50 - Godly Chatter": "Chatter Level 50", 
                 "LV60 - Ungodly Chatter": "Chatter Level 60",
                 "LV100 - Supreme Chatter": "Chatter Level 100",
