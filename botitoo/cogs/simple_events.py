@@ -39,6 +39,33 @@ class simple_events(commands.Cog):
                 await warningMsg.delete()
     # (counting channel)
 
+    # racist reactions checker
+    # basically checks if N I and G letter emojis are in the same message's reactions. it's a little jank but it will save time
+    # TODO: also apply it to special nitro reactions
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload):
+      message = await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)
+      
+      if len(message.reactions) > 2:
+        m = ""
+        r = [] # for the individual reaction components (if needed to remove them later)
+        for reaction in message.reactions:
+          match reaction.emoji:
+            case "🇳":
+              m += "n"
+              r.append(reaction)
+            case "🇮":
+              m += "i"
+              r.append(reaction)
+            case "🇬":
+              m += "g"
+              r.append(reaction)
+        if m == "nig":
+          for i in range(0, len(r)): # get each reaction component index
+            users = [user async for user in r[i].users()]
+            for user in users:
+              await r[i].remove(user)
+
     async def cog_load(self):
         print(f"{self.__class__.__name__} loaded")
 
