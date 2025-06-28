@@ -15,19 +15,26 @@ class role_changes(commands.Cog):
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
         if len(before.roles) < len(after.roles): # if roles are added        
+            # should probably change this to work for role IDs and not role names
             roles = [
                 "YouTube Member", 
-                "LV50 - Godly Chatter", 
-                "LV60 - Ungodly Chatter",
-                "LV100 - Supreme Chatter",
+                "Level 50 - Pro Chatter", 
+                "Level 60 - Elite Chatter",
+                "Level 75 - Ungodly Chatter",
+                "Level 90 - Ultra Chatter",
+                "Level 100 - Touch Grass",
+                "Level 125 - ULTIMATE CHATTER",
                 "Your Own Custom Display Role"
             ]
 
             announcement = {
                 "YouTube Member": "YouTube Member", 
-                "LV50 - Godly Chatter": "Chatter Level 50", 
-                "LV60 - Ungodly Chatter": "Chatter Level 60",
-                "LV100 - Supreme Chatter": "Chatter Level 100",
+                "Level 50 - Pro Chatter": "Chatter Level 50", 
+                "Level 60 - Elite Chatter": "Chatter Level 60",
+                "Level 75 - Ungodly Chatter": "Chatter Level 75",
+                "Level 90 - Ultra Chatter": "Chatter Level 90",
+                "Level 100 - Touch Grass": "Chatter Level 100",
+                "Level 125 - ULTIMATE CHATTER": "Chatter Level 125",
                 "Your Own Custom Display Role": "Custom Role Subscriber"
             }
             
@@ -42,16 +49,22 @@ class role_changes(commands.Cog):
                 for i in range(0, len(after.roles)):
                   if after.roles[i].name == role:  
                     await self.bot.get_channel(1194447194137297129).send(f'{after.mention} just became a {announcement[role]}!')
-                    if role == "LV60 - Ungodly Chatter": 
-                      await self.bot.get_channel(1194447194137297129).send("Now they can change the <@&1128048702024597540> role color for **1 day!!**, send a DM to <@1297779124739510353> and let us know your color of choice!")
-                      break
-                    elif role == "LV100 - Supreme Chatter": 
-                      await self.bot.get_channel(1194447194137297129).send(":sparkles: Now they can have **their own custom role!** Send a DM to <@1297779124739510353> and let us know your role name and icon of choice!")
-                      break
-                    elif role == "Your Own Custom Display Role": 
-                      await self.bot.get_channel(1194447194137297129).send(":sparkles: Now they can have **their own custom role!** And you can too! Head to the top of the channel list and click the Server Shop tab to learn more!")
-                    # maybe add this onto the top message? dk
-                    break
+                    match role:
+                      case "Level 75 - Ungodly Chatter":
+                        await self.bot.get_channel(1194447194137297129).send("Now they can change the <@&1128048702024597540> role color for **1 day!!**, send a DM to <@1297779124739510353> and let us know your color of choice!")
+                        break
+                      case "Level 90 - Ultra Chatter":
+                        await self.bot.get_channel(1194447194137297129).send("Now they can claim a __**free month of Chez's channel membership!!**__ Enjoy exclusive content, discord roles, and emojis in YouTube! To the lucky winner, please send a DM to <@1297779124739510353>")
+                        break
+                      case "Level 100 - Touch Grass":
+                        await self.bot.get_channel(1194447194137297129).send(":sparkles: Now they can have **their own custom role!** Send a DM to <@1297779124739510353> and let us know your role name and icon of choice!")
+                        break
+                      case "Level 125 - ULTIMATE CHATTER":
+                        await self.bot.get_channel(1194447194137297129).send(":sparkles: Now they can have a **custom gradient** on their custom role! Send a DM to <@1297779124739510353> and let us know the colors of your choice!")
+                        break
+                      case "Your Own Custom Display Role":
+                        await self.bot.get_channel(1194447194137297129).send(":sparkles: Now they can have **their own custom role!** And you can too! Head to the top of the channel list and click the Server Shop tab to learn more!")
+                        break  
 
             # TODO: check if someone resubs. if the sub role is added AND if they're in the database AND their role is marked as invalid, remove the invalid
             if after.get_role(1345992570601209890) and not before.get_role(1345992570601209890): # custom role sub role
