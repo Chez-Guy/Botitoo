@@ -3,6 +3,13 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+"""
+
+Simple script for sending community favorite GIFs through the bot. Don't ask me why my community wanted this, they just did.
+And I'm about 90% sure nobody uses it anymore
+
+"""
+
 gifs = {
   "bleh":"https://cdn.discordapp.com/attachments/1241250107584680050/1252834482482839584/blehhcat.jpeg?ex=66745149&is=6672ffc9&hm=43f2212ea81163e0d2771202ed87e51d65d300e2b341545809bb4623069eaef4&",
   "uni":"https://cdn.discordapp.com/attachments/1220991843697819689/1252488526600212562/GQMevCVaEAAzkjf.png?ex=66746096&is=66730f16&hm=1f7656d1ef5b40cee6421d766853301f43dc3da153e377221882bc9efe955054&",

@@ -5,7 +5,12 @@ from discord import app_commands
 from discord.ext import commands
 from botitoo.bot import Botitoo
 
-# change this to the name of the cog
+"""
+
+Mainly for handling shoutouts for people who reach specific chatter level roles in the server
+
+"""
+
 class role_changes(commands.Cog):
     def __init__(self, bot: Botitoo):
         self.bot = bot # adding a bot attribute for easier access
@@ -48,26 +53,26 @@ class role_changes(commands.Cog):
               if not isRole:
                 for i in range(0, len(after.roles)):
                   if after.roles[i].name == role:  
-                    await self.bot.get_channel(1194447194137297129).send(f'{after.mention} just became a {announcement[role]}!')
+                    await self.bot.get_channel(self.bot.shoutout_channelID).send(f'{after.mention} just became a {announcement[role]}!')
                     match role:
                       case "Level 75 - Ungodly Chatter":
-                        await self.bot.get_channel(1194447194137297129).send("Now they can change the <@&1128048702024597540> role color for **1 day!!**, send a DM to <@1297779124739510353> and let us know your color of choice!")
+                        await self.bot.get_channel(self.bot.shoutout_channelID).send("Now they can change the <@&1128048702024597540> role color for **1 day!!**, send a DM to <@1297779124739510353> and let us know your color of choice!")
                         break
                       case "Level 90 - Ultra Chatter":
-                        await self.bot.get_channel(1194447194137297129).send("Now they can claim a __**free month of Chez's channel membership!!**__ Enjoy exclusive content, discord roles, and emojis in YouTube! To the lucky winner, please send a DM to <@1297779124739510353>")
+                        await self.bot.get_channel(self.bot.shoutout_channelID).send("Now they can claim a __**free month of Chez's channel membership!!**__ Enjoy exclusive content, discord roles, and emojis in YouTube! To the lucky winner, please send a DM to <@1297779124739510353>")
                         break
                       case "Level 100 - Touch Grass":
-                        await self.bot.get_channel(1194447194137297129).send(":sparkles: Now they can have **their own custom role!** Send a DM to <@1297779124739510353> and let us know your role name and icon of choice!")
+                        await self.bot.get_channel(self.bot.shoutout_channelID).send(":sparkles: Now they can have **their own custom role!** Send a DM to <@1297779124739510353> and let us know your role name and icon of choice!")
                         break
                       case "Level 125 - ULTIMATE CHATTER":
-                        await self.bot.get_channel(1194447194137297129).send(":sparkles: Now they can have a **custom gradient** on their custom role! Send a DM to <@1297779124739510353> and let us know the colors of your choice!")
+                        await self.bot.get_channel(self.bot.shoutout_channelID).send(":sparkles: Now they can have a **custom gradient** on their custom role! Send a DM to <@1297779124739510353> and let us know the colors of your choice!")
                         break
                       case "Your Own Custom Display Role":
-                        await self.bot.get_channel(1194447194137297129).send(":sparkles: Now they can have **their own custom role!** And you can too! Head to the top of the channel list and click the Server Shop tab to learn more!")
+                        await self.bot.get_channel(self.bot.shoutout_channelID).send(":sparkles: Now they can have **their own custom role!** And you can too! Head to the top of the channel list and click the Server Shop tab to learn more!")
                         break  
 
             # TODO: check if someone resubs. if the sub role is added AND if they're in the database AND their role is marked as invalid, remove the invalid
-            if after.get_role(1345992570601209890) and not before.get_role(1345992570601209890): # custom role sub role
+            if after.get_role(self.bot.custom_role_subscriberID) and not before.get_role(self.bot.custom_role_subscriberID): # custom role sub role
               self.bot.cursor.execute(f"SELECT * FROM custom_roles WHERE userID={str(after.id)} AND invalid=1")
               if self.bot.cursor.fetchone():
                 self.bot.cursor.execute(f"UPDATE custom_roles SET invalid=0 WHERE userID={str(after.id)}")
@@ -76,22 +81,22 @@ class role_changes(commands.Cog):
         else: # if roles are removed
         
             # --- check if booster ---
-            if (before.get_role(1141138598880620627) or before.get_role(1138520134118559884)) and not (after.get_role(1141138598880620627) or after.get_role(1138520134118559884)):
+            if (before.get_role(self.bot.booster_roleID) or before.get_role(self.bot.youtube_memberID)) and not (after.get_role(self.bot.booster_roleID) or after.get_role(self.bot.youtube_memberID)):
               for i in range(0, self.bot.colors.count):
                 if after.get_role(self.bot.colors[i]):
-                  await after.remove_roles(after.guild.get_role(self.bot.colors[i]))
-                  await self.bot.get_channel(1321148137494020157).send(f'Removed color roles from {after.mention}')
+                  await after.remove_roles(after.get_guild(self.bot.guildID).get_role(self.bot.colors[i]))
+                  await self.bot.get_channel(self.bot).send(f'Removed color roles from {after.mention}')
 
               # TODO: change all of these to after.get_role(roleID) cuz i JUST discovered that. they werent lying when they said autism speaks
 
             # --- check if custom role subscriber ---
-            if not after.get_role(1345992570601209890) and before.get_role(1345992570601209890): 
+            if not after.get_role(self.bot.custom_role_subscriberID) and before.get_role(self.bot.custom_role_subscriberID): 
               self.bot.cursor.execute(f"SELECT roleID FROM custom_roles WHERE userID={str(after.id)}")
               roleID = self.bot.cursor.fetchone()[0]
               await after.remove_roles(int(roleID))
               self.bot.cursor.execute(f"UPDATE custom_roles SET invalid=1, invalid_time={str(int(datetime.now().timestamp()))} WHERE userID={str(after.id)}")
               self.bot.db.commit()
-              await self.bot.get_channel(1321148137494020157).send(f'Removed custom role {self.bot.get_guild(1128048701387055209).get_role(int(roleID)).mention} from {after.mention}.')
+              await self.bot.get_channel(self.bot.server_log_channelID).send(f'Removed custom role {self.bot.get_guild(self.bot.guildID).get_role(int(roleID)).mention} from {after.mention}.')
 
     async def cog_load(self):
         print(f"{self.__class__.__name__} loaded")

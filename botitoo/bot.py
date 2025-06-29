@@ -7,11 +7,14 @@ from dotenv import dotenv_values
 import glob
 import psycopg
 
+"""
+
+Main script that defines the Botitoo class, all its vairables, functions, and some event listeners
+
+"""
+
 class Botitoo(commands.Bot):
     def __init__(self):
-
-        # define variables and stuff here (define with self.[name])
-
         intents = discord.Intents.default()
         intents.messages = True
         intents.message_content = True
@@ -31,15 +34,34 @@ class Botitoo(commands.Bot):
         self.db=psycopg.connect(**self.db_params)
         self.cursor = self.db.cursor()
 
+        """ 
+        Change the variables below to configure with your own server
+        A lot of these are based around roles created for channel members, discord subscribers, and other stuff,
+        but can be replicated into your own server by changing these IDs to your own roles/channels
+        """
+
         self.colors = [1193322620779778146,1193322880331690024,1193322903173857321,1193322915345731604,1193322927375003708,1193322940603838525,1199434340770267257,1204570321433272320] 
-        # roles are in order with how they appear in discord. im sure it doesnt matter but whatever
+    
+        self.guildID = 1128048701387055209
+
+        self.general_chatID = 1128048705363251265
+
+        self.shoutout_channelID = 1194447194137297129
+
+        self.count_channelID = 1136238325825536070
+
+        self.custom_role_subscriberID = 1345992570601209890
+
+        self.server_log_channelID = 1321148137494020157
+
+        self.booster_roleID = 1141138598880620627
+
+        self.youtube_memberID = 1138520134118559884
 
         self.usedLink = None
 
         super().__init__(intents=intents, command_prefix='b!')
 
-
-    # put functions here to be used elsewhere
     '''
     # submissions or media_share_users for database
     def changeMS_database(self, database, change, id, val=None): # id is user's id, val is how much to change by (default for val is none for funcs that want to read)

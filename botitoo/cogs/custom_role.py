@@ -5,11 +5,20 @@ from discord import app_commands
 from discord.ext import tasks, commands
 from botitoo.bot import Botitoo
 
-# change this to the name of the cog
+"""
+
+Commands for registering custom roles to users so in case they stop subscribing, they lose their custom role
+Then deletes the custom role after 15 days of no use
+
+"""
+
 class custom_role(commands.Cog):
     def __init__(self, bot: Botitoo):
         self.bot = bot # adding a bot attribute for easier access
 
+
+    # roles that cant be registered to a user in the db (admin roles, mod roles, etc.)
+    # they're not actually given the roles but it's good to have this blacklist so there's no issues
     global blacklist
     blacklist = [
         1128048701953286192,
@@ -59,9 +68,9 @@ class custom_role(commands.Cog):
         results = self.bot.cursor.execute("SELECT invalid_time, roleid FROM custom_roles WHERE invalid=1")
         if self.bot.cursor.fetchall():
             for r in range(0, len(results)):
-                if int(results[r][0]) + 1296000 <= datetime.now().timestamp():
+                if int(results[r][0]) + 1296000 <= datetime.now().timestamp(): # 15 day change
                     self.bot.cursor.execute(f"DELETE FROM custom_roles WHERE roleid={str(results[r][1])}")
-                    await self.bot.get_guild(1128048701387055209).get_role(int(results[r][1])).delete(reason="Role exceeded 15 day expiration")
+                    await self.bot.get_guild(self.bot.guildID).get_role(int(results[r][1])).delete(reason="Role exceeded 15 day expiration")
                     self.bot.db.commit()
 
     async def cog_load(self):
