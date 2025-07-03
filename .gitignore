@@ -3,3 +3,4 @@
 archive/
 botitoo/__pycache__/
 botitoo/cogs/__pycache__/
+config.json
