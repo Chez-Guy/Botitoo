@@ -19,6 +19,12 @@ class simple_events(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         await self.bot.get_channel(self.bot.general_chatID).send(f'yo everyone be quiet for a sec, {member.mention} just joined the server <:peepoSus:1141063962692169768> give them a warm welcome!! <:joecool:1141064043617059036>')
+    
+    @commands.Cog.listener()
+    async def on_message(self, message):
+      if not message.author.bot and not message.content.lower().find("clanker")==-1:
+        await asyncio.sleep(3)
+        await message.add_reaction("😡")
 
     # racist reactions checker
     # basically checks if N I and G letter emojis are in the same message's reactions. it's a little jank but it will save time
