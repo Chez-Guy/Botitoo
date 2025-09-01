@@ -23,7 +23,6 @@ class simple_events(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
       if not message.author.bot and not message.content.lower().find("clanker")==-1:
-        await asyncio.sleep(3)
         await message.add_reaction("😡")
 
     # racist reactions checker
