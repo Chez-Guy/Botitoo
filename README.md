@@ -1,5 +1,5 @@
 # Botitoo, the Discord Bot 🤖
-Botitoo is a Discord bot built on [Discord.py](https://github.com/Rapptz/discord.py) and uses a [PostgreSQL](https://www.postgresql.org/) database. This bot is intended for use in the [Chezito's Cavern](https://discord.gg/chez) Discord server.
+Botitoo is a Discord bot built on [Discord.py](https://github.com/Rapptz/discord.py) and uses a [PostgreSQL](https://www.postgresql.org/) database. This bot is intended for use in the [Chez's Cavern](https://discord.gg/chez) Discord server.
 
 This is my first time making a project of mine open source and giving others the ability to clone it to their own instance, so if any issues arrise using it in your own server, please post them in the [Issues](https://github.com/Chez-Guy/Botitoo/issues) tab, and I'll do my best to get on it!
 

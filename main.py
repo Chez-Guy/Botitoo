@@ -8,5 +8,3 @@ try:
 except discord.HTTPException as e:
     if e.status == 429: print("The Discord servers denied the connection for making too many requests :(")
     else: raise e
-#bot.cursor.execute("DELETE FROM weirdos")
-#bot.db.commit()
